@@ -6,8 +6,20 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Neighbourhood map</title>
 
-  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-  <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+  <style>
+    .search-field {
+      max-width: 90%;
+      margin: 0 auto;
+    }
+    .map {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
   
@@ -34,17 +46,21 @@
       </nav>
     </div>
     <main class="mdl-layout__content">
-      <div class="page-content"><!-- Your content goes here --></div>
+        <div id="map" class="map"></div>
     </main>
   </div>
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-  <style>
-    .search-field {
-      max-width: 90%;
-      margin: 0 auto;
+  <script>
+    var map;
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -34.397, lng: 150.644},
+        zoom: 8
+      });
     }
-  </style>
+  </script>
+  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDM8ecaAq3kJ3TvtI4w_Fw16YHgHZRHCyo&callback=initMap" async defer></script>
 </body>
 </html>
