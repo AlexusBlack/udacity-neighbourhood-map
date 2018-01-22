@@ -26,9 +26,19 @@ function createMarker(place) {
 }
 
 function createInfoWindow(place) {
-  return new google.maps.InfoWindow({
+  const infoWindow = new google.maps.InfoWindow({
     content: place.name
   });
+
+  getFoursquareData(place).then((info) => {
+    let content = `<b>${place.name}</b><br><br>`;
+    if(!(info.address == null)) content += `${info.address}<br>`;
+    if(!(info.city == null)) content += `${info.city}<br>`;
+    if(!(info.phone == null)) content += `<a href='tel:${info.phone}'>${info.formattedPhone}</a>`;
+    infoWindow.setContent(content);
+  });
+
+  return infoWindow;
 }
 
 function showInfoWindow(place) {
@@ -57,4 +67,27 @@ function setActivePlace(placeToActivate) {
       place.active(true);
     }
   }
+}
+
+async function getFoursquareData(place) {
+  const response = await fetch(`https://api.foursquare.com/v2/venues/search?` + 
+        `ll=${place.location.lat},${place.location.lng}&query=${place.name}&` +
+        `client_id=${FOURSQUARE_CLIENT_ID}&client_secret=${FOURSQUARE_CLIENT_SECRET}&v=20180122`);
+
+  if (response.status !== 200) {
+    console.error('Looks like there was a problem with loading foursquare info. Status Code: ' +
+      response.status);
+      // TODO: show snackbar
+    return;
+  }
+  
+  const data = await response.json();
+  const placeData = data.response.venues[0];
+  const info = {
+    address: placeData.location.address,
+    city: placeData.location.city,
+    phone: placeData.contact.phone,
+    formattedPhone: placeData.contact.formattedPhone
+  };
+  return info;
 }
