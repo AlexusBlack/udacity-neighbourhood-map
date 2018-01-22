@@ -29,7 +29,7 @@
       </div>
 
       <nav class="mdl-navigation" data-bind="foreach: filteredPlaces">
-        <a class="mdl-navigation__link" href="#">
+        <a class="mdl-navigation__link" href="#" data-bind="click: itemClickHandler, css: { 'mdl-navigation__link--current': active }">
           <span data-bind="if: category == 'geeks'"><i class="material-icons">stars</i></span>
           <span data-bind="if: category == 'groceries'"><i class="material-icons">shopping_cart</i></span>
           <span data-bind="if: category == 'restorant'"><i class="material-icons">restaurant</i></span>
@@ -46,8 +46,10 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
   <script src="js/custom-bindings/map-settings.js"></script>
   <script src="js/custom-bindings/map-markers.js"></script>
+  <script src="js/utils/tools.js"></script>
   <script src="js/utils/filters.js"></script>
   <script src="js/utils/marker-click-handler.js"></script>
+  <script src="js/utils/item-click-handler.js"></script>
   <script src="js/model.js"></script>
   <script src="js/app.js"></script>
 </body>

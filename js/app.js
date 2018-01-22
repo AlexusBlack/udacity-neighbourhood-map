@@ -16,6 +16,14 @@ fetch('./places.json').then((response) => {
   }
 
   response.json().then((data) => {
-    model.places.push(...data);
+    for(let place of data) {
+      model.places.push({
+        name: place.name,
+        location: place.location,
+        category: place.category,
+        active: ko.observable(false)
+      });
+    }
+    // model.places.push(...data);
   });
 });

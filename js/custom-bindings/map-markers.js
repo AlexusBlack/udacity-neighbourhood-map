@@ -1,30 +1,19 @@
 ko.bindingHandlers.mapMarkers = {
   update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+    let map = element;
     // Unwrapping markers list
     let placesList = ko.utils.unwrapObservable(valueAccessor());
 
-    // TODO: We can have some sophisticated marker caching here if we need
-
     let createMarkers = () => {
       // Cleaning old markers
-      if(typeof(element.markers) != 'undefined') {
-        for(let marker of element.markers) {
-          if(!(marker.infoWindow == null)) {
-            marker.infoWindow.close();
-          }
-          marker.setMap(null);
-        }
-      }
-      element.markers = [];
+      clearMap(map);
 
-      for(let marker of placesList) {
-        let gmarker = new google.maps.Marker({
-          position: marker.location,
-          map: element.googleMap,
-          title: marker.name
-        });
-        gmarker.addListener('click', markerClickHandler);
-        element.markers.push(gmarker);
+      for(let place of placesList) {
+        if(place.marker == null) {
+          place.marker = createMarker(place);
+        }
+        place.marker.setMap(map.googleMap);
+        map.markers.push(place.marker);
       }
     };
     
