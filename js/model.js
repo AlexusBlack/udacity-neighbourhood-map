@@ -6,7 +6,7 @@ function AppModel() {
     zoom: 15
   });
 
-  this.filter = ko.observable('');
+  this.filter = ko.observable(localStorage.searchString || '');
   this.places = ko.observableArray([]);
 
   this.filteredPlaces = ko.computed(() => {

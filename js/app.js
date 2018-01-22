@@ -1,6 +1,11 @@
 const model = new AppModel();
 ko.applyBindings(model);
 
+model.filter.subscribe((searchString) => {
+  // saving our search string to localStorage
+  localStorage.searchString = searchString;
+});
+
 // Loading places list
 fetch('./places.json').then((response) => {
   if (response.status !== 200) {
