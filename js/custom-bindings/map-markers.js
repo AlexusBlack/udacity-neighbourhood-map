@@ -9,6 +9,9 @@ ko.bindingHandlers.mapMarkers = {
       // Cleaning old markers
       if(typeof(element.markers) != 'undefined') {
         for(let marker of element.markers) {
+          if(!(marker.infoWindow == null)) {
+            marker.infoWindow.close();
+          }
           marker.setMap(null);
         }
       }
@@ -20,6 +23,7 @@ ko.bindingHandlers.mapMarkers = {
           map: element.googleMap,
           title: marker.name
         });
+        gmarker.addListener('click', markerClickHandler);
         element.markers.push(gmarker);
       }
     };
