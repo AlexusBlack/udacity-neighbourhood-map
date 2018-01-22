@@ -23,6 +23,16 @@ function getPlaceIcon(place) {
   }
 }
 
+function showSnackbar(message, timeout = -1) {
+  if(timeout == -1) timeout = 2000;
+  const snackbarContainer = document.getElementById('snackbar-container');
+  const data = {
+    message: message,
+    timeout: timeout
+  };
+  snackbarContainer.MaterialSnackbar.showSnackbar(data);
+}
+
 function createMarker(place) {
   let marker = new google.maps.Marker({
     position: place.location,
@@ -38,16 +48,24 @@ function createMarker(place) {
 
 function createInfoWindow(place) {
   const infoWindow = new google.maps.InfoWindow({
-    content: place.name
+    content: `<b>${place.name}</b><br><br>Loading...`
   });
 
-  getFoursquareData(place).then((info) => {
-    let content = `<b>${place.name}</b><br><br>`;
-    if(!(info.address == null)) content += `${info.address}<br>`;
-    if(!(info.city == null)) content += `${info.city}<br>`;
-    if(!(info.phone == null)) content += `<a href='tel:${info.phone}'>${info.formattedPhone}</a>`;
-    infoWindow.setContent(content);
-  });
+  getFoursquareData(place).then(
+    (info) => {
+      let content = `<b>${place.name}</b><br><br>`;
+
+      if(info == null) {
+        content += `<i>Load error</i>`;
+      } else {
+        if(!(info.address == null)) content += `${info.address}<br>`;
+        if(!(info.city == null)) content += `${info.city}<br>`;
+        if(!(info.phone == null)) content += `<a href='tel:${info.phone}'>${info.formattedPhone}</a>`;
+      }
+      
+      infoWindow.setContent(content);
+    }
+  );
 
   return infoWindow;
 }
@@ -81,14 +99,18 @@ function setActivePlace(placeToActivate) {
 }
 
 async function getFoursquareData(place) {
-  const response = await fetch(`https://api.foursquare.com/v2/venues/search?` + 
-        `ll=${place.location.lat},${place.location.lng}&query=${place.name}&` +
-        `client_id=${FOURSQUARE_CLIENT_ID}&client_secret=${FOURSQUARE_CLIENT_SECRET}&v=20180122`);
-
+  let response
+  try {
+    response = await fetch(`https://api.foursquare.com/v2/venues/search?` + 
+      `ll=${place.location.lat},${place.location.lng}&query=${place.name}&` +
+      `client_id=${FOURSQUARE_CLIENT_ID}&client_secret=${FOURSQUARE_CLIENT_SECRET}&v=20180122`);
+  } catch(e) {
+    showSnackbar('Unable to access foursquare ' + e.message);
+    return;
+  }
+  
   if (response.status !== 200) {
-    console.error('Looks like there was a problem with loading foursquare info. Status Code: ' +
-      response.status);
-      // TODO: show snackbar
+    showSnackbar('Looks like there was a problem with loading foursquare info. Status Code: ' + response.status);
     return;
   }
   

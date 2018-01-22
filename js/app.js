@@ -13,9 +13,7 @@ const request = async () => {
   const response = await fetch('./places.json');
 
   if (response.status !== 200) {
-    console.error('Looks like there was a problem with loading places list. Status Code: ' +
-      response.status);
-      // TODO: show snackbar
+    showSnackbar('Looks like there was a problem with loading places list. Status Code: ' + response.status);
     return;
   }
 
