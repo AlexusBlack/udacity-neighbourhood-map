@@ -6,8 +6,9 @@ model.filter.subscribe((searchString) => {
   localStorage.searchString = searchString;
 });
 
-// Loading places list
-fetch('./places.json').then((response) => {
+const request = async () => {
+  const response = await fetch('./places.json');
+
   if (response.status !== 200) {
     console.error('Looks like there was a problem with loading places list. Status Code: ' +
       response.status);
@@ -15,15 +16,26 @@ fetch('./places.json').then((response) => {
     return;
   }
 
-  response.json().then((data) => {
-    for(let place of data) {
-      model.places.push({
-        name: place.name,
-        location: place.location,
-        category: place.category,
-        active: ko.observable(false)
-      });
-    }
-    // model.places.push(...data);
-  });
-});
+  const placesList = await response.json();
+
+  for(let placeData of placesList) {
+    let place = {
+      name: placeData.name,
+      location: placeData.location,
+      category: placeData.category,
+      active: ko.observable(false)
+    };
+
+    place.active.subscribe((active) => {
+      if(active) {
+        showInfoWindow(place);
+      } else {
+        closeInfoWindow(place);
+      }
+    });
+
+    model.places.push(place);
+  }
+}
+
+request();

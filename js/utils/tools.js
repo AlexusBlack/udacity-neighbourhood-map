@@ -19,14 +19,6 @@ function createMarker(place) {
     map: null,
     title: place.name
   });
-  
-  place.active.subscribe((active) => {
-    if(active) {
-      showInfoWindow(place);
-    } else {
-      closeInfoWindow(place);
-    }
-  });
 
   marker.addListener('click', () => setActivePlace(place));
 
