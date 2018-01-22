@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Coles Southbank", 
+    "location": {"lat": -37.832107, "lng": 144.960530},
+    "category": "groceries"
+  },
+  {
+    "name": "Coles Melbourne",
+    "location": {"lat": -37.817676, "lng": 144.965087},
+    "category": "groceries"
+  },
+  {
+    "name": "Minotaur",
+    "location": {"lat": -37.815495, "lng": 144.963529},
+    "category": "geeks"
+  },
+  {
+    "name": "Critical Hit",
+    "location": {"lat": -37.815876, "lng": 144.962470},
+    "category": "geeks"
+  },
+  {
+    "name": "All Star Comics", 
+    "location": {"lat": -37.817532, "lng": 144.961568},
+    "category": "geeks"
+  },
+  {
+    "name": "Stalactites",
+    "location": {"lat": -37.811151, "lng": 144.967080},
+    "category": "restorant"
+  },
+  {
+    "name": "Rare Steakhouse",
+    "location": {"lat": -37.819183, "lng": 144.957340},
+    "category": "restorant"
+  },
+  {
+    "name": "ShanDong MaMa", 
+    "location": {"lat": -37.812815, "lng": 144.967418},
+    "category": "restorant"
+  }
+]
