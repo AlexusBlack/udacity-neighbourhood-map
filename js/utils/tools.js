@@ -13,11 +13,22 @@ function clearMap(map) {
   map.markers = [];
 }
 
+function getPlaceIcon(place) {
+  if(place.category == 'groceries') {
+    return './img/shop-icon.svg';
+  } else if(place.category == 'geeks') {
+    return './img/geek-icon.svg';
+  } else if(place.category == 'restorant') {
+    return './img/restaurant-icon.svg';
+  }
+}
+
 function createMarker(place) {
   let marker = new google.maps.Marker({
     position: place.location,
     map: null,
-    title: place.name
+    title: place.name,
+    icon: getPlaceIcon(place)
   });
 
   marker.addListener('click', () => setActivePlace(place));
