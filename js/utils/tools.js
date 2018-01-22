@@ -19,26 +19,50 @@ function createMarker(place) {
     map: null,
     title: place.name
   });
-  marker.addListener('click', markerClickHandler);
+  
   place.active.subscribe((active) => {
     if(active) {
-      showInfoWindow(marker);
+      showInfoWindow(place);
+    } else {
+      closeInfoWindow(place);
     }
   });
+
+  marker.addListener('click', () => setActivePlace(place));
 
   return marker;
 }
 
-function showInfoWindow(marker) {
-  if(!(marker.infoWindow == null)) return;
-
-  marker.setAnimation(google.maps.Animation.BOUNCE);
-  setTimeout(() => {
-    marker.setAnimation(null);
-  }, 750);
-  marker.infoWindow = new google.maps.InfoWindow({
-    content: marker.title
+function createInfoWindow(place) {
+  return new google.maps.InfoWindow({
+    content: place.name
   });
-  google.maps.event.addListener(marker.infoWindow, 'closeclick', () => marker.infoWindow = null);
-  marker.infoWindow.open(marker.map, marker);
+}
+
+function showInfoWindow(place) {
+  if(place.marker.infoWindow == null) {
+    place.marker.infoWindow = createInfoWindow(place);
+  }
+
+  place.marker.setAnimation(google.maps.Animation.BOUNCE);
+  setTimeout(() => {
+    place.marker.setAnimation(null);
+  }, 750);
+
+  place.marker.infoWindow.open(place.marker.map, place.marker);
+}
+
+function closeInfoWindow(place) {
+  place.marker.infoWindow.close();
+}
+
+function setActivePlace(placeToActivate) {
+  if(placeToActivate.active()) return;
+  for(var place of model.places()) {
+    if(place != placeToActivate) {
+      place.active(false);
+    } else {
+      place.active(true);
+    }
+  }
 }
