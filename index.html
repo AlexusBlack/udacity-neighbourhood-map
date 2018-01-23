@@ -28,6 +28,11 @@
         <label class="mdl-textfield__label" for="item-search">Search</label>
       </div>
 
+      <div data-bind="if: errorLoadingPlaces">
+          <nav class="mdl-navigation">
+            <a class="mdl-navigation__link mdl-navigation__link--reload" href="#" data-bind="click: loadPlaces">Reload places</a>
+          </nav>
+      </div>
       <nav class="mdl-navigation" data-bind="foreach: filteredPlaces">
         <a class="mdl-navigation__link" href="#" data-bind="click: itemClickHandler, css: { 'mdl-navigation__link--current': active }">
           <span data-bind="if: category == 'geeks'"><i class="material-icons">stars</i></span>

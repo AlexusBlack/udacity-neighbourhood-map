@@ -1,6 +1,8 @@
 function AppModel() {
   let self = this;
 
+  this.errorLoadingPlaces = ko.observable(false);
+
   this.map = ko.observable({
     center: {lat: -37.821410, lng: 144.959343},
     zoom: 15

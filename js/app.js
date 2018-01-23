@@ -9,8 +9,17 @@ model.filter.subscribe((searchString) => {
   localStorage.searchString = searchString;
 });
 
-const request = async () => {
-  const response = await fetch('./places.json');
+const loadPlaces = async () => {
+  model.errorLoadingPlaces(false);
+  let response;
+  try {
+    response = await fetch('./places.json');
+  } catch(e) {
+    console.error('Looks like there was a problem with loading places list.' + e.message);
+    alert('We were unable to load places list, please try to reload it with button in sidebar');
+    model.errorLoadingPlaces(true);
+    return;
+  }
 
   if (response.status !== 200) {
     showSnackbar('Looks like there was a problem with loading places list. Status Code: ' + response.status);
@@ -39,4 +48,4 @@ const request = async () => {
   }
 }
 
-request();
+loadPlaces();
