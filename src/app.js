@@ -1,17 +1,12 @@
 import AppModel from './app-model';
+import mapSettingsBinding from './custom-bindings/map-settings';
+import mapMarkersBinding from './custom-bindings/map-markers';
 import {showSnackbar, showInfoWindow, closeInfoWindow} from './utils/tools';
-import itemClickHandler from './utils/item-click-handler';
-
-const FOURSQUARE_CLIENT_ID = '1TJBD0BFMGT5FJFTNVLRZSP2PLEMDOC0GOFQAJ3NGDY0TTB5';
-const FOURSQUARE_CLIENT_SECRET = '3NAQ2TJEZ2ZAWHMZ1BKSVQ00WKA325VCADGWQZ2N1WC1BETZ';
 
 const model = new AppModel();
+ko.bindingHandlers.mapSettings = mapSettingsBinding();
+ko.bindingHandlers.mapMarkers = mapMarkersBinding();
 ko.applyBindings(model);
-
-model.filter.subscribe((searchString) => {
-  // saving our search string to localStorage
-  localStorage.searchString = searchString;
-});
 
 const loadPlaces = async () => {
   model.errorLoadingPlaces(false);
@@ -31,25 +26,26 @@ const loadPlaces = async () => {
   }
 
   const placesList = await response.json();
+  model.addPlace(...placesList);
 
-  for(let placeData of placesList) {
-    let place = {
-      name: placeData.name,
-      location: placeData.location,
-      category: placeData.category,
-      active: ko.observable(false)
-    };
+  // for(let placeData of placesList) {
+  //   let place = {
+  //     name: placeData.name,
+  //     location: placeData.location,
+  //     category: placeData.category,
+  //     active: ko.observable(false)
+  //   };
 
-    place.active.subscribe((active) => {
-      if(active) {
-        showInfoWindow(place);
-      } else {
-        closeInfoWindow(place);
-      }
-    });
+  //   place.active.subscribe((active) => {
+  //     if(active) {
+  //       showInfoWindow(place);
+  //     } else {
+  //       closeInfoWindow(place);
+  //     }
+  //   });
 
-    model.places.push(place);
-  }
+  //   model.places.push(place);
+  // }
 }
 
 loadPlaces();

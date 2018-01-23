@@ -1,3 +1,5 @@
+import filterPlaceBySearchString from './utils/filters';
+
 export default function AppModel() {
   let self = this;
 
@@ -9,6 +11,11 @@ export default function AppModel() {
   });
 
   this.filter = ko.observable(localStorage.searchString || '');
+  this.filter.subscribe((searchString) => {
+    // saving our search string to localStorage
+    localStorage.searchString = searchString;
+  });
+
   this.places = ko.observableArray([]);
 
   this.filteredPlaces = ko.computed(() => {
@@ -21,7 +28,30 @@ export default function AppModel() {
     );
   });
 
+  this.addPlace = function(...placesInfo) {
+    for(let placeInfo of placesInfo) {
+      let place = {
+        name: placeInfo.name,
+        location: placeInfo.location,
+        category: placeInfo.category,
+        active: ko.observable(false)
+      };
+      place.active.subscribe((state) => placeActiveStateChanged.call(this, place, state));
+      this.places.push(place);
+    }   
+  }
+
   this.selectPlace = function(e) {
     this.active(true);
+  }
+
+  function placeActiveStateChanged(changedPlace, state) {
+    if(state == false) return;
+    // only one place can be active at the time
+    for(let place of this.places()) {
+      if(place != changedPlace) {
+        place.active(false);
+      }
+    }
   }
 }

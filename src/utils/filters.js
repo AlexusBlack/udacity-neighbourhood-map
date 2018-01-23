@@ -1,4 +1,4 @@
-function filterPlaceBySearchString(place, searchString) {
+export default function filterPlaceBySearchString(place, searchString) {
   const name = place.name.toLowerCase();
   const category = place.category.toLowerCase();
   const search = searchString.toLowerCase();

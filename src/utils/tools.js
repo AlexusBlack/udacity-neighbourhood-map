@@ -1,5 +1,7 @@
+import getFoursquareData from './foursquare-api';
+
 export {
-  clearMap, showSnackbar, createMarker, showInfoWindow, closeInfoWindow, setActivePlace, getFoursquareData
+  clearMap, showSnackbar, createMarker
 }
 
 function clearMap(map) {
@@ -45,7 +47,15 @@ function createMarker(place) {
     icon: getPlaceIcon(place)
   });
 
-  marker.addListener('click', () => setActivePlace(place));
+  place.active.subscribe((active) => {
+    if(active) {
+      showInfoWindow(place);
+    } else {
+      closeInfoWindow(place);
+    }
+  });
+
+  marker.addListener('click', () => place.active(true));
 
   return marker;
 }
@@ -89,42 +99,4 @@ function showInfoWindow(place) {
 
 function closeInfoWindow(place) {
   place.marker.infoWindow.close();
-}
-
-function setActivePlace(placeToActivate) {
-  if(placeToActivate.active()) return;
-  for(var place of model.places()) {
-    if(place != placeToActivate) {
-      place.active(false);
-    } else {
-      place.active(true);
-    }
-  }
-}
-
-async function getFoursquareData(place) {
-  let response
-  try {
-    response = await fetch(`https://api.foursquare.com/v2/venues/search?` + 
-      `ll=${place.location.lat},${place.location.lng}&query=${place.name}&` +
-      `client_id=${FOURSQUARE_CLIENT_ID}&client_secret=${FOURSQUARE_CLIENT_SECRET}&v=20180122`);
-  } catch(e) {
-    showSnackbar('Unable to access foursquare ' + e.message);
-    return;
-  }
-  
-  if (response.status !== 200) {
-    showSnackbar('Looks like there was a problem with loading foursquare info. Status Code: ' + response.status);
-    return;
-  }
-  
-  const data = await response.json();
-  const placeData = data.response.venues[0];
-  const info = {
-    address: placeData.location.address,
-    city: placeData.location.city,
-    phone: placeData.contact.phone,
-    formattedPhone: placeData.contact.formattedPhone
-  };
-  return info;
 }

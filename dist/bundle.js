@@ -70,22 +70,18 @@
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_model__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_tools__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_item_click_handler__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__custom_bindings_map_settings__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__custom_bindings_map_markers__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_tools__ = __webpack_require__(4);
 
 
 
 
-const FOURSQUARE_CLIENT_ID = '1TJBD0BFMGT5FJFTNVLRZSP2PLEMDOC0GOFQAJ3NGDY0TTB5';
-const FOURSQUARE_CLIENT_SECRET = '3NAQ2TJEZ2ZAWHMZ1BKSVQ00WKA325VCADGWQZ2N1WC1BETZ';
 
 const model = new __WEBPACK_IMPORTED_MODULE_0__app_model__["a" /* default */]();
+ko.bindingHandlers.mapSettings = Object(__WEBPACK_IMPORTED_MODULE_1__custom_bindings_map_settings__["a" /* default */])();
+ko.bindingHandlers.mapMarkers = Object(__WEBPACK_IMPORTED_MODULE_2__custom_bindings_map_markers__["a" /* default */])();
 ko.applyBindings(model);
-
-model.filter.subscribe((searchString) => {
-  // saving our search string to localStorage
-  localStorage.searchString = searchString;
-});
 
 const loadPlaces = async () => {
   model.errorLoadingPlaces(false);
@@ -100,30 +96,31 @@ const loadPlaces = async () => {
   }
 
   if (response.status !== 200) {
-    Object(__WEBPACK_IMPORTED_MODULE_1__utils_tools__["c" /* showSnackbar */])('Looks like there was a problem with loading places list. Status Code: ' + response.status);
+    Object(__WEBPACK_IMPORTED_MODULE_3__utils_tools__["c" /* showSnackbar */])('Looks like there was a problem with loading places list. Status Code: ' + response.status);
     return;
   }
 
   const placesList = await response.json();
+  model.addPlace(...placesList);
 
-  for(let placeData of placesList) {
-    let place = {
-      name: placeData.name,
-      location: placeData.location,
-      category: placeData.category,
-      active: ko.observable(false)
-    };
+  // for(let placeData of placesList) {
+  //   let place = {
+  //     name: placeData.name,
+  //     location: placeData.location,
+  //     category: placeData.category,
+  //     active: ko.observable(false)
+  //   };
 
-    place.active.subscribe((active) => {
-      if(active) {
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils_tools__["b" /* showInfoWindow */])(place);
-      } else {
-        Object(__WEBPACK_IMPORTED_MODULE_1__utils_tools__["a" /* closeInfoWindow */])(place);
-      }
-    });
+  //   place.active.subscribe((active) => {
+  //     if(active) {
+  //       showInfoWindow(place);
+  //     } else {
+  //       closeInfoWindow(place);
+  //     }
+  //   });
 
-    model.places.push(place);
-  }
+  //   model.places.push(place);
+  // }
 }
 
 loadPlaces();
@@ -134,6 +131,9 @@ loadPlaces();
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = AppModel;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_filters__ = __webpack_require__(2);
+
+
 function AppModel() {
   let self = this;
 
@@ -145,6 +145,11 @@ function AppModel() {
   });
 
   this.filter = ko.observable(localStorage.searchString || '');
+  this.filter.subscribe((searchString) => {
+    // saving our search string to localStorage
+    localStorage.searchString = searchString;
+  });
+
   this.places = ko.observableArray([]);
 
   this.filteredPlaces = ko.computed(() => {
@@ -153,12 +158,35 @@ function AppModel() {
     }
     return ko.utils.arrayFilter(
       self.places(), 
-      (place) => filterPlaceBySearchString(place, self.filter())
+      (place) => Object(__WEBPACK_IMPORTED_MODULE_0__utils_filters__["a" /* default */])(place, self.filter())
     );
   });
 
+  this.addPlace = function(...placesInfo) {
+    for(let placeInfo of placesInfo) {
+      let place = {
+        name: placeInfo.name,
+        location: placeInfo.location,
+        category: placeInfo.category,
+        active: ko.observable(false)
+      };
+      place.active.subscribe((state) => placeActiveStateChanged.call(this, place, state));
+      this.places.push(place);
+    }   
+  }
+
   this.selectPlace = function(e) {
     this.active(true);
+  }
+
+  function placeActiveStateChanged(changedPlace, state) {
+    if(state == false) return;
+    // only one place can be active at the time
+    for(let place of this.places()) {
+      if(place != changedPlace) {
+        place.active(false);
+      }
+    }
   }
 }
 
@@ -167,13 +195,53 @@ function AppModel() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export clearMap */
+/* harmony export (immutable) */ __webpack_exports__["a"] = filterPlaceBySearchString;
+function filterPlaceBySearchString(place, searchString) {
+  const name = place.name.toLowerCase();
+  const category = place.category.toLowerCase();
+  const search = searchString.toLowerCase();
+  
+  if(name.indexOf(search) != -1) {
+    return true;
+  } else if(category.indexOf(search) != -1) {
+    return true;
+  }
+  return false;
+}
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = mapSettings;
+function mapSettings() {
+  return {
+    init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+      // Unwrapping map data
+      let settings = ko.utils.unwrapObservable(valueAccessor());
+  
+      let initialize = () => element.googleMap = new google.maps.Map(element, settings);
+      if(typeof(google) == 'undefined') {
+        console.error('google map unavailable');
+        return;
+      }
+      google.maps.event.addDomListener(window, 'load',  initialize);
+    }
+  };
+};
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return clearMap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return showSnackbar; });
-/* unused harmony export createMarker */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return showInfoWindow; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return closeInfoWindow; });
-/* unused harmony export setActivePlace */
-/* unused harmony export getFoursquareData */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createMarker; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foursquare_api__ = __webpack_require__(6);
+
+
 
 
 function clearMap(map) {
@@ -219,7 +287,15 @@ function createMarker(place) {
     icon: getPlaceIcon(place)
   });
 
-  marker.addListener('click', () => setActivePlace(place));
+  place.active.subscribe((active) => {
+    if(active) {
+      showInfoWindow(place);
+    } else {
+      closeInfoWindow(place);
+    }
+  });
+
+  marker.addListener('click', () => place.active(true));
 
   return marker;
 }
@@ -229,7 +305,7 @@ function createInfoWindow(place) {
     content: `<b>${place.name}</b><br><br>Loading...`
   });
 
-  getFoursquareData(place).then(
+  Object(__WEBPACK_IMPORTED_MODULE_0__foursquare_api__["a" /* default */])(place).then(
     (info) => {
       let content = `<b>${place.name}</b><br><br>`;
 
@@ -265,16 +341,56 @@ function closeInfoWindow(place) {
   place.marker.infoWindow.close();
 }
 
-function setActivePlace(placeToActivate) {
-  if(placeToActivate.active()) return;
-  for(var place of model.places()) {
-    if(place != placeToActivate) {
-      place.active(false);
-    } else {
-      place.active(true);
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = mapMarkers;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_tools__ = __webpack_require__(4);
+
+
+function mapMarkers() {
+  return {
+    update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+      let map = element;
+      // Unwrapping markers list
+      let placesList = ko.utils.unwrapObservable(valueAccessor());
+  
+      let createMarkers = () => {
+        // Cleaning old markers
+        Object(__WEBPACK_IMPORTED_MODULE_0__utils_tools__["a" /* clearMap */])(map);
+  
+        for(let place of placesList) {
+          if(place.marker == null) {
+            place.marker = Object(__WEBPACK_IMPORTED_MODULE_0__utils_tools__["b" /* createMarker */])(place);
+          }
+          place.marker.setMap(map.googleMap);
+          map.markers.push(place.marker);
+        }
+      };
+      
+      if (document.readyState === 'complete') {
+        createMarkers();
+      } else {
+        if(typeof(google) == 'undefined') {
+          console.error('google map unavailable');
+          return;
+        }
+        google.maps.event.addDomListener(window, 'load', createMarkers);
+      }
     }
-  }
+  };
 }
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getFoursquareData;
+const FOURSQUARE_CLIENT_ID = '1TJBD0BFMGT5FJFTNVLRZSP2PLEMDOC0GOFQAJ3NGDY0TTB5';
+const FOURSQUARE_CLIENT_SECRET = '3NAQ2TJEZ2ZAWHMZ1BKSVQ00WKA325VCADGWQZ2N1WC1BETZ';
 
 async function getFoursquareData(place) {
   let response
@@ -301,16 +417,6 @@ async function getFoursquareData(place) {
     formattedPhone: placeData.contact.formattedPhone
   };
   return info;
-}
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* unused harmony export default */
-function itemClickHandler(e) {
-  setActivePlace(this);
 }
 
 /***/ })
