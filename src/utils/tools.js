@@ -1,3 +1,7 @@
+export {
+  clearMap, showSnackbar, createMarker, showInfoWindow, closeInfoWindow, setActivePlace, getFoursquareData
+}
+
 function clearMap(map) {
   if(!(map.markers == null)) {
     for(let marker of map.markers) {

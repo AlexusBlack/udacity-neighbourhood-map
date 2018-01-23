@@ -1,4 +1,4 @@
-function AppModel() {
+export default function AppModel() {
   let self = this;
 
   this.errorLoadingPlaces = ko.observable(false);
@@ -20,4 +20,8 @@ function AppModel() {
       (place) => filterPlaceBySearchString(place, self.filter())
     );
   });
+
+  this.selectPlace = function(e) {
+    this.active(true);
+  }
 }
