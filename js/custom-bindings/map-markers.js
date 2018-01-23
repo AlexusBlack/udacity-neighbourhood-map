@@ -20,6 +20,10 @@ ko.bindingHandlers.mapMarkers = {
     if (document.readyState === 'complete') {
       createMarkers();
     } else {
+      if(typeof(google) == 'undefined') {
+        console.error('google map unavailable');
+        return;
+      }
       google.maps.event.addDomListener(window, 'load', createMarkers);
     }
   }
