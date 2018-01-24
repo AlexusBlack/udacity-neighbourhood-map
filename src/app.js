@@ -27,25 +27,6 @@ const loadPlaces = async () => {
 
   const placesList = await response.json();
   model.addPlace(...placesList);
-
-  // for(let placeData of placesList) {
-  //   let place = {
-  //     name: placeData.name,
-  //     location: placeData.location,
-  //     category: placeData.category,
-  //     active: ko.observable(false)
-  //   };
-
-  //   place.active.subscribe((active) => {
-  //     if(active) {
-  //       showInfoWindow(place);
-  //     } else {
-  //       closeInfoWindow(place);
-  //     }
-  //   });
-
-  //   model.places.push(place);
-  // }
 }
 
 loadPlaces();
