@@ -1,4 +1,5 @@
 import { clearMap, createMarker } from '../utils/tools';
+import mdlDialog from './mdl-dialog';
 
 export default function mapMarkers() {
   return {
@@ -24,7 +25,7 @@ export default function mapMarkers() {
         createMarkers();
       } else {
         if(typeof(google) == 'undefined') {
-          console.error('google map unavailable');
+          mdlDialog.show('Google Map api is unavailable, please check your internet connection.');
           return;
         }
         google.maps.event.addDomListener(window, 'load', createMarkers);

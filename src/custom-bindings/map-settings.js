@@ -1,3 +1,5 @@
+import mdlDialog from './mdl-dialog';
+
 export default function mapSettings() {
   return {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
@@ -6,7 +8,7 @@ export default function mapSettings() {
   
       let initialize = () => element.googleMap = new google.maps.Map(element, settings);
       if(typeof(google) == 'undefined') {
-        console.error('google map unavailable');
+        mdlDialog.show('Google Map api is unavailable, please check your internet connection.');
         return;
       }
       google.maps.event.addDomListener(window, 'load',  initialize);

@@ -1,4 +1,5 @@
 import getFoursquareData from './foursquare-api';
+import PlacesLoadingException from '../exceptions/places-loading-exception';
 
 export {
   clearMap, showSnackbar, createMarker, loadPlaces
@@ -106,14 +107,11 @@ async function loadPlaces() {
   try {
     response = await fetch('./places.json');
   } catch(e) {
-    console.error('Looks like there was a problem with loading places list.' + e.message);
-    alert('We were unable to load places list, please try to reload it with button in sidebar');
-    return;
+    throw new PlacesLoadingException('Looks like there was a problem with loading places list.' + e.message);
   }
 
   if (response.status !== 200) {
-    showSnackbar('Looks like there was a problem with loading places list. Status Code: ' + response.status);
-    return;
+    throw new PlacesLoadingException('Looks like there was a problem with loading places list. Status Code: ' + response.status);
   }
 
   const placesList = await response.json();

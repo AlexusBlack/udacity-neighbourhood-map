@@ -1,10 +1,16 @@
 import filterPlaceBySearchString from './utils/filters';
 import { loadPlaces } from './utils/tools';
+import mdlDialog from './custom-bindings/mdl-dialog';
 
 export default function AppModel() {
   let self = this;
 
   this.errorLoadingPlaces = ko.observable(false);
+
+  this.dialog = {
+    message: ko.observable(''),
+    visible: ko.observable(false)
+  };
 
   this.map = ko.observable({
     center: {lat: -37.821410, lng: 144.959343},
@@ -31,11 +37,17 @@ export default function AppModel() {
 
   this.loadPlaces = async () => {
     this.errorLoadingPlaces(false);
-    const places = await loadPlaces();
-    if(places != null) {
+    try {
+      const places = await loadPlaces();
       this.addPlace(...places);
-    } else {
+    } catch(e) {
       this.errorLoadingPlaces(true);
+      if(e.name == 'PlacesLoadingException') {
+        mdlDialog.show('Error while loading places list, you can try reload it with button in sidebar.');
+      } else {
+        mdlDialog.show('Unknown error happened');
+        console.error(e.message, e);
+      }
     }
   }
 
@@ -54,6 +66,10 @@ export default function AppModel() {
 
   this.selectPlace = function(e) {
     this.active(true);
+  }
+
+  this.closeDialog = function(e) {
+    this.dialog.visible(false);
   }
 
   function placeActiveStateChanged(changedPlace, state) {
