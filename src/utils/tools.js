@@ -1,8 +1,8 @@
-import getFoursquareData from './foursquare-api';
 import PlacesLoadingException from '../exceptions/places-loading-exception';
+import { showInfoWindow, closeInfoWindow } from './map-info-window';
 
 export {
-  clearMap, showSnackbar, createMarker, loadPlaces
+  clearMap, createMarker, loadPlaces
 }
 
 function clearMap(map) {
@@ -30,16 +30,6 @@ function getPlaceIcon(place) {
   }
 }
 
-function showSnackbar(message, timeout = -1) {
-  if(timeout == -1) timeout = 2000;
-  const snackbarContainer = document.getElementById('snackbar-container');
-  const data = {
-    message: message,
-    timeout: timeout
-  };
-  snackbarContainer.MaterialSnackbar.showSnackbar(data);
-}
-
 function createMarker(place) {
   let marker = new google.maps.Marker({
     position: place.location,
@@ -59,56 +49,6 @@ function createMarker(place) {
   marker.addListener('click', () => place.active(true));
 
   return marker;
-}
-
-function createInfoWindow(place) {
-  const infoWindow = new google.maps.InfoWindow({
-    content: `<b>${place.name}</b>`
-  });
-
-  loadAdditionalInfoWindowData(place, infoWindow);
-
-  return infoWindow;
-}
-
-function loadAdditionalInfoWindowData(place, infoWindow) {
-  infoWindow.setContent(`<b>${place.name}</b><br><br>Loading...`);
-
-  getFoursquareData(place).then(
-    (info) => {
-      let content = `<b>${place.name}</b><br><br>`;
-      if(!(info.address == null)) content += `${info.address}<br>`;
-      if(!(info.city == null)) content += `${info.city}<br>`;
-      if(!(info.phone == null)) content += `<a href='tel:${info.phone}'>${info.formattedPhone}</a>`;
-      
-      infoWindow.setContent(content);
-    },
-    (error) => {
-      const div = document.createElement('div');
-      let content = `<b>${place.name}</b><br><br>`;
-      content += `<i>Load error. (<a href="#">Reload</a>)</i>`;
-      div.innerHTML = content;
-      div.querySelector('a').addEventListener('click', () => loadAdditionalInfoWindowData(place, infoWindow));
-      infoWindow.setContent(div);
-    }
-  );
-}
-
-function showInfoWindow(place) {
-  if(place.marker.infoWindow == null) {
-    place.marker.infoWindow = createInfoWindow(place);
-  }
-
-  place.marker.setAnimation(google.maps.Animation.BOUNCE);
-  setTimeout(() => {
-    place.marker.setAnimation(null);
-  }, 750);
-
-  place.marker.infoWindow.open(place.marker.map, place.marker);
-}
-
-function closeInfoWindow(place) {
-  place.marker.infoWindow.close();
 }
 
 async function loadPlaces() {

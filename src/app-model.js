@@ -1,6 +1,6 @@
 import filterPlaceBySearchString from './utils/filters';
 import { loadPlaces } from './utils/tools';
-import mdlDialog from './custom-bindings/mdl-dialog';
+import mdlDialog from './utils/mdl-dialog';
 
 export default function AppModel() {
   let self = this;

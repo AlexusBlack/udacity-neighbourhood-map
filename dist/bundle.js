@@ -72,8 +72,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_model__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__custom_bindings_map_settings__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__custom_bindings_map_markers__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_tools__ = __webpack_require__(4);
-
 
 
 
@@ -95,7 +93,7 @@ model.loadPlaces();
 /* harmony export (immutable) */ __webpack_exports__["a"] = AppModel;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_filters__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_tools__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__custom_bindings_mdl_dialog__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_mdl_dialog__ = __webpack_require__(12);
 
 
 
@@ -141,9 +139,9 @@ function AppModel() {
     } catch(e) {
       this.errorLoadingPlaces(true);
       if(e.name == 'PlacesLoadingException') {
-        __WEBPACK_IMPORTED_MODULE_2__custom_bindings_mdl_dialog__["a" /* default */].show('Error while loading places list, you can try reload it with button in sidebar.');
+        __WEBPACK_IMPORTED_MODULE_2__utils_mdl_dialog__["a" /* default */].show('Error while loading places list, you can try reload it with button in sidebar.');
       } else {
-        __WEBPACK_IMPORTED_MODULE_2__custom_bindings_mdl_dialog__["a" /* default */].show('Unknown error happened');
+        __WEBPACK_IMPORTED_MODULE_2__utils_mdl_dialog__["a" /* default */].show('Unknown error happened');
         console.error(e.message, e);
       }
     }
@@ -206,7 +204,7 @@ function filterPlaceBySearchString(place, searchString) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = mapSettings;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mdl_dialog__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_mdl_dialog__ = __webpack_require__(12);
 
 
 function mapSettings() {
@@ -217,7 +215,7 @@ function mapSettings() {
   
       let initialize = () => element.googleMap = new google.maps.Map(element, settings);
       if(typeof(google) == 'undefined') {
-        __WEBPACK_IMPORTED_MODULE_0__mdl_dialog__["a" /* default */].show('Google Map api is unavailable, please check your internet connection.');
+        __WEBPACK_IMPORTED_MODULE_0__utils_mdl_dialog__["a" /* default */].show('Google Map api is unavailable, please check your internet connection.');
         return;
       }
       google.maps.event.addDomListener(window, 'load',  initialize);
@@ -231,11 +229,10 @@ function mapSettings() {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return clearMap; });
-/* unused harmony export showSnackbar */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createMarker; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return loadPlaces; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foursquare_api__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__exceptions_places_loading_exception__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__exceptions_places_loading_exception__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__map_info_window__ = __webpack_require__(13);
 
 
 
@@ -266,16 +263,6 @@ function getPlaceIcon(place) {
   }
 }
 
-function showSnackbar(message, timeout = -1) {
-  if(timeout == -1) timeout = 2000;
-  const snackbarContainer = document.getElementById('snackbar-container');
-  const data = {
-    message: message,
-    timeout: timeout
-  };
-  snackbarContainer.MaterialSnackbar.showSnackbar(data);
-}
-
 function createMarker(place) {
   let marker = new google.maps.Marker({
     position: place.location,
@@ -286,9 +273,9 @@ function createMarker(place) {
 
   place.active.subscribe((active) => {
     if(active) {
-      showInfoWindow(place);
+      Object(__WEBPACK_IMPORTED_MODULE_1__map_info_window__["b" /* showInfoWindow */])(place);
     } else {
-      closeInfoWindow(place);
+      Object(__WEBPACK_IMPORTED_MODULE_1__map_info_window__["a" /* closeInfoWindow */])(place);
     }
   });
 
@@ -297,66 +284,16 @@ function createMarker(place) {
   return marker;
 }
 
-function createInfoWindow(place) {
-  const infoWindow = new google.maps.InfoWindow({
-    content: `<b>${place.name}</b>`
-  });
-
-  loadAdditionalInfoWindowData(place, infoWindow);
-
-  return infoWindow;
-}
-
-function loadAdditionalInfoWindowData(place, infoWindow) {
-  infoWindow.setContent(`<b>${place.name}</b><br><br>Loading...`);
-
-  Object(__WEBPACK_IMPORTED_MODULE_0__foursquare_api__["a" /* default */])(place).then(
-    (info) => {
-      let content = `<b>${place.name}</b><br><br>`;
-      if(!(info.address == null)) content += `${info.address}<br>`;
-      if(!(info.city == null)) content += `${info.city}<br>`;
-      if(!(info.phone == null)) content += `<a href='tel:${info.phone}'>${info.formattedPhone}</a>`;
-      
-      infoWindow.setContent(content);
-    },
-    (error) => {
-      const div = document.createElement('div');
-      let content = `<b>${place.name}</b><br><br>`;
-      content += `<i>Load error. (<a href="#">Reload</a>)</i>`;
-      div.innerHTML = content;
-      div.querySelector('a').addEventListener('click', () => loadAdditionalInfoWindowData(place, infoWindow));
-      infoWindow.setContent(div);
-    }
-  );
-}
-
-function showInfoWindow(place) {
-  if(place.marker.infoWindow == null) {
-    place.marker.infoWindow = createInfoWindow(place);
-  }
-
-  place.marker.setAnimation(google.maps.Animation.BOUNCE);
-  setTimeout(() => {
-    place.marker.setAnimation(null);
-  }, 750);
-
-  place.marker.infoWindow.open(place.marker.map, place.marker);
-}
-
-function closeInfoWindow(place) {
-  place.marker.infoWindow.close();
-}
-
 async function loadPlaces() {
   let response;
   try {
     response = await fetch('./places.json');
   } catch(e) {
-    throw new __WEBPACK_IMPORTED_MODULE_1__exceptions_places_loading_exception__["a" /* default */]('Looks like there was a problem with loading places list.' + e.message);
+    throw new __WEBPACK_IMPORTED_MODULE_0__exceptions_places_loading_exception__["a" /* default */]('Looks like there was a problem with loading places list.' + e.message);
   }
 
   if (response.status !== 200) {
-    throw new __WEBPACK_IMPORTED_MODULE_1__exceptions_places_loading_exception__["a" /* default */]('Looks like there was a problem with loading places list. Status Code: ' + response.status);
+    throw new __WEBPACK_IMPORTED_MODULE_0__exceptions_places_loading_exception__["a" /* default */]('Looks like there was a problem with loading places list. Status Code: ' + response.status);
   }
 
   const placesList = await response.json();
@@ -371,7 +308,7 @@ async function loadPlaces() {
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = mapMarkers;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_tools__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mdl_dialog__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_mdl_dialog__ = __webpack_require__(12);
 
 
 
@@ -399,7 +336,7 @@ function mapMarkers() {
         createMarkers();
       } else {
         if(typeof(google) == 'undefined') {
-          __WEBPACK_IMPORTED_MODULE_1__mdl_dialog__["a" /* default */].show('Google Map api is unavailable, please check your internet connection.');
+          __WEBPACK_IMPORTED_MODULE_1__utils_mdl_dialog__["a" /* default */].show('Google Map api is unavailable, please check your internet connection.');
           return;
         }
         google.maps.event.addDomListener(window, 'load', createMarkers);
@@ -1211,7 +1148,19 @@ module.exports = function() {
 
 
 /***/ }),
-/* 10 */
+/* 10 */,
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = FoursquareLoadingException;
+function FoursquareLoadingException(message) {
+  this.message = message;
+  this.name = 'FoursquareLoadingException';
+}
+
+/***/ }),
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1249,14 +1198,65 @@ function close() {
 }
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = FoursquareLoadingException;
-function FoursquareLoadingException(message) {
-  this.message = message;
-  this.name = 'FoursquareLoadingException';
+/* unused harmony export createInfoWindow */
+/* unused harmony export loadAdditionalInfoWindowData */
+/* harmony export (immutable) */ __webpack_exports__["b"] = showInfoWindow;
+/* harmony export (immutable) */ __webpack_exports__["a"] = closeInfoWindow;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foursquare_api__ = __webpack_require__(6);
+
+
+function createInfoWindow(place) {
+  const infoWindow = new google.maps.InfoWindow({
+    content: `<b>${place.name}</b>`
+  });
+
+  loadAdditionalInfoWindowData(place, infoWindow);
+
+  return infoWindow;
+}
+
+function loadAdditionalInfoWindowData(place, infoWindow) {
+  infoWindow.setContent(`<b>${place.name}</b><br><br>Loading...`);
+
+  Object(__WEBPACK_IMPORTED_MODULE_0__foursquare_api__["a" /* default */])(place).then(
+    (info) => {
+      let content = `<b>${place.name}</b><br><br>`;
+      if(!(info.address == null)) content += `${info.address}<br>`;
+      if(!(info.city == null)) content += `${info.city}<br>`;
+      if(!(info.phone == null)) content += `<a href='tel:${info.phone}'>${info.formattedPhone}</a>`;
+      
+      infoWindow.setContent(content);
+    },
+    (error) => {
+      const div = document.createElement('div');
+      let content = `<b>${place.name}</b><br><br>`;
+      content += `<i>Load error. (<a href="#">Reload</a>)</i>`;
+      div.innerHTML = content;
+      div.querySelector('a').addEventListener('click', () => loadAdditionalInfoWindowData(place, infoWindow));
+      infoWindow.setContent(div);
+    }
+  );
+}
+
+function showInfoWindow(place) {
+  if(place.marker.infoWindow == null) {
+    place.marker.infoWindow = createInfoWindow(place);
+  }
+
+  place.marker.setAnimation(google.maps.Animation.BOUNCE);
+  setTimeout(() => {
+    place.marker.setAnimation(null);
+  }, 750);
+
+  place.marker.infoWindow.open(place.marker.map, place.marker);
+}
+
+function closeInfoWindow(place) {
+  place.marker.infoWindow.close();
 }
 
 /***/ })

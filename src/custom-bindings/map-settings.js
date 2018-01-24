@@ -1,4 +1,4 @@
-import mdlDialog from './mdl-dialog';
+import mdlDialog from '../utils/mdl-dialog';
 
 export default function mapSettings() {
   return {

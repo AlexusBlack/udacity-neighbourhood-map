@@ -1,5 +1,5 @@
 import { clearMap, createMarker } from '../utils/tools';
-import mdlDialog from './mdl-dialog';
+import mdlDialog from '../utils/mdl-dialog';
 
 export default function mapMarkers() {
   return {
