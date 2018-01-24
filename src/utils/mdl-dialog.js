@@ -28,3 +28,4 @@ function close() {
   if(_dialog == null) return;
   _dialog.close();
 }
+

@@ -4,7 +4,8 @@
   "description": "Neighbourhood map for udacity nanodegree project",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:dev": "webpack --env.development",
+    "build:prod": "webpack --env.production -p"
   },
   "repository": {
     "type": "git",

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,13 +68,11 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dialog_polyfill__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dialog_polyfill__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dialog_polyfill___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_dialog_polyfill__);
 
 
-/* harmony default export */ __webpack_exports__["a"] = ({ show, close });
-
-let _dialog;
+var _dialog;
 
 function create() {
   _dialog = document.querySelector('dialog');
@@ -101,193 +99,10 @@ function close() {
   _dialog.close();
 }
 
+/* harmony default export */ __webpack_exports__["a"] = ({ show, close });
+
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return clearMap; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createMarker; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return loadPlaces; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__exceptions_places_loading_exception__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__map_info_window__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__img_shop_icon_svg__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__img_shop_icon_svg___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__img_shop_icon_svg__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__img_geek_icon_svg__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__img_geek_icon_svg___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__img_geek_icon_svg__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__img_restaurant_icon_svg__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__img_restaurant_icon_svg___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__img_restaurant_icon_svg__);
-
-
-
-
-
-
-
-
-
-function clearMap(map) {
-  if(!(map.markers == null)) {
-    for(let marker of map.markers) {
-      // closing info windows if open
-      if(!(marker.infoWindow == null)) {
-        marker.infoWindow.close();
-      }
-      // removing marker
-      marker.setMap(null);
-    }
-  }
-  // cleaning markers storage
-  map.markers = [];
-}
-
-function getPlaceIcon(place) {
-  if(place.category == 'groceries') {
-    return __WEBPACK_IMPORTED_MODULE_2__img_shop_icon_svg___default.a;
-  } else if(place.category == 'geeks') {
-    return __WEBPACK_IMPORTED_MODULE_3__img_geek_icon_svg___default.a;
-  } else if(place.category == 'restorant') {
-    return __WEBPACK_IMPORTED_MODULE_4__img_restaurant_icon_svg___default.a;
-  }
-}
-
-function createMarker(place) {
-  let marker = new google.maps.Marker({
-    position: place.location,
-    map: null,
-    title: place.name,
-    icon: getPlaceIcon(place)
-  });
-
-  place.active.subscribe((active) => {
-    if(active) {
-      Object(__WEBPACK_IMPORTED_MODULE_1__map_info_window__["b" /* showInfoWindow */])(place);
-    } else {
-      Object(__WEBPACK_IMPORTED_MODULE_1__map_info_window__["a" /* closeInfoWindow */])(place);
-    }
-  });
-
-  marker.addListener('click', () => place.active(true));
-
-  return marker;
-}
-
-async function loadPlaces() {
-  let response;
-  try {
-    response = await fetch('./places.json');
-  } catch(e) {
-    throw new __WEBPACK_IMPORTED_MODULE_0__exceptions_places_loading_exception__["a" /* default */]('Looks like there was a problem with loading places list.' + e.message);
-  }
-
-  if (response.status !== 200) {
-    throw new __WEBPACK_IMPORTED_MODULE_0__exceptions_places_loading_exception__["a" /* default */]('Looks like there was a problem with loading places list. Status Code: ' + response.status);
-  }
-
-  const placesList = await response.json();
-
-  return placesList;
-}
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dialog_polyfill_dialog_polyfill_css__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dialog_polyfill_dialog_polyfill_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_dialog_polyfill_dialog_polyfill_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_styles_css__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_styles_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__css_styles_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_model__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__custom_bindings_map_settings__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__custom_bindings_map_markers__ = __webpack_require__(19);
-
-
-
-
-
-
-
-const model = new __WEBPACK_IMPORTED_MODULE_2__app_model__["a" /* default */]();
-ko.bindingHandlers.mapSettings = Object(__WEBPACK_IMPORTED_MODULE_3__custom_bindings_map_settings__["a" /* default */])();
-ko.bindingHandlers.mapMarkers = Object(__WEBPACK_IMPORTED_MODULE_4__custom_bindings_map_markers__["a" /* default */])();
-ko.applyBindings(model);
-
-model.loadPlaces();
-
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(4);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
-var transform;
-
-var options = {"hmr":true}
-options.transform = transform
-// add the styles to the DOM
-var update = __webpack_require__(8)(content, options);
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../node_modules/css-loader/index.js!./styles.css", function() {
-			var newContent = require("!!../node_modules/css-loader/index.js!./styles.css");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var escape = __webpack_require__(5);
-exports = module.exports = __webpack_require__(6)(false);
-// imports
-
-
-// module
-exports.push([module.i, ".search-field {\n  max-width: 90%;\n  margin: 0 auto;\n}\n\n.map {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n\n  background-image: url(" + escape(__webpack_require__(7)) + ");\n  background-repeat: no-repeat;\n  background-position: center;\n  background-size: 25%;\n}\n\n.mdl-navigation__link {\n  display: flex !important;\n  flex-direction: row;\n  align-items: center;\n}\n\n.mdl-navigation__link .material-icons {\n  font-size: 24px;\n  margin-right: 15px;\n}\n\n.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.mdl-navigation__link--reload {\n  background-color: #f44336;\n  color: white;\n}", ""]);
-
-// exports
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = function escape(url) {
-    if (typeof url !== 'string') {
-        return url
-    }
-    // If url is already wrapped in quotes, remove them
-    if (/^['"].*['"]$/.test(url)) {
-        url = url.slice(1, -1);
-    }
-    // Should url be wrapped?
-    // See https://drafts.csswg.org/css-values-3/#urls
-    if (/["'() \t\n]/.test(url)) {
-        return '"' + url.replace(/"/g, '\\"').replace(/\n/g, '\\n') + '"'
-    }
-
-    return url
-}
-
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports) {
 
 /*
@@ -369,13 +184,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = "dist/assets/3f0f071bec392bff23c5bd3797688e23.svg";
-
-/***/ }),
-/* 8 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -431,7 +240,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(9);
+var	fixUrls = __webpack_require__(7);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -747,7 +556,169 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 9 */
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return clearMap; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createMarker; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return loadPlaces; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__exceptions_places_loading_exception__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__map_info_window__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__img_shop_icon_svg__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__img_shop_icon_svg___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__img_shop_icon_svg__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__img_geek_icon_svg__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__img_geek_icon_svg___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__img_geek_icon_svg__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__img_restaurant_icon_svg__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__img_restaurant_icon_svg___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__img_restaurant_icon_svg__);
+
+
+
+
+
+
+
+
+
+function clearMap(map) {
+  if(!(map.markers == null)) {
+    for(let marker of map.markers) {
+      // closing info windows if open
+      if(!(marker.infoWindow == null)) {
+        marker.infoWindow.close();
+      }
+      // removing marker
+      marker.setMap(null);
+    }
+  }
+  // cleaning markers storage
+  map.markers = [];
+}
+
+function getPlaceIcon(place) {
+  if(place.category == 'groceries') {
+    return __WEBPACK_IMPORTED_MODULE_2__img_shop_icon_svg___default.a;
+  } else if(place.category == 'geeks') {
+    return __WEBPACK_IMPORTED_MODULE_3__img_geek_icon_svg___default.a;
+  } else if(place.category == 'restorant') {
+    return __WEBPACK_IMPORTED_MODULE_4__img_restaurant_icon_svg___default.a;
+  }
+}
+
+function createMarker(place) {
+  let marker = new google.maps.Marker({
+    position: place.location,
+    map: null,
+    title: place.name,
+    icon: getPlaceIcon(place)
+  });
+
+  place.active.subscribe((active) => {
+    if(active) {
+      Object(__WEBPACK_IMPORTED_MODULE_1__map_info_window__["b" /* showInfoWindow */])(place);
+    } else {
+      Object(__WEBPACK_IMPORTED_MODULE_1__map_info_window__["a" /* closeInfoWindow */])(place);
+    }
+  });
+
+  marker.addListener('click', () => place.active(true));
+
+  return marker;
+}
+
+async function loadPlaces() {
+  let response;
+  try {
+    response = await fetch('./places.json');
+  } catch(e) {
+    throw new __WEBPACK_IMPORTED_MODULE_0__exceptions_places_loading_exception__["a" /* default */]('Looks like there was a problem with loading places list.' + e.message);
+  }
+
+  if (response.status !== 200) {
+    throw new __WEBPACK_IMPORTED_MODULE_0__exceptions_places_loading_exception__["a" /* default */]('Looks like there was a problem with loading places list. Status Code: ' + response.status);
+  }
+
+  const placesList = await response.json();
+
+  return placesList;
+}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dialog_polyfill_dialog_polyfill_css__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_dialog_polyfill_dialog_polyfill_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_dialog_polyfill_dialog_polyfill_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_styles_css__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_styles_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__css_styles_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app_model__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__custom_bindings_map_settings__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__custom_bindings_map_markers__ = __webpack_require__(24);
+
+
+
+
+
+
+
+const model = new __WEBPACK_IMPORTED_MODULE_2__app_model__["a" /* default */]();
+ko.bindingHandlers.mapSettings = Object(__WEBPACK_IMPORTED_MODULE_3__custom_bindings_map_settings__["a" /* default */])();
+ko.bindingHandlers.mapMarkers = Object(__WEBPACK_IMPORTED_MODULE_4__custom_bindings_map_markers__["a" /* default */])();
+ko.applyBindings(model);
+
+model.loadPlaces();
+
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(6);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {"hmr":true}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(2)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../css-loader/index.js!./dialog-polyfill.css", function() {
+			var newContent = require("!!../css-loader/index.js!./dialog-polyfill.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)(false);
+// imports
+
+
+// module
+exports.push([module.i, "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;border:solid;padding:1em;background:#fff;color:#000;display:block}dialog:not([open]){display:none}dialog+.backdrop{background:rgba(0,0,0,.1)}._dialog_overlay,dialog+.backdrop{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translateY(-50%)}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports) {
 
 
@@ -842,13 +813,87 @@ module.exports = function (css) {
 
 
 /***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(9);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {"hmr":true}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(2)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../node_modules/css-loader/index.js!./styles.css", function() {
+			var newContent = require("!!../node_modules/css-loader/index.js!./styles.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var escape = __webpack_require__(10);
+exports = module.exports = __webpack_require__(1)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".search-field{max-width:90%;margin:0 auto}.map{position:absolute;width:100%;height:100%;background-image:url(" + escape(__webpack_require__(11)) + ");background-repeat:no-repeat;background-position:50%;background-size:25%}.mdl-navigation__link{display:flex!important;flex-direction:row;align-items:center}.mdl-navigation__link .material-icons{font-size:24px;margin-right:15px}.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.mdl-navigation__link--reload{background-color:#f44336;color:#fff}", ""]);
+
+// exports
+
+
+/***/ }),
 /* 10 */
+/***/ (function(module, exports) {
+
+module.exports = function escape(url) {
+    if (typeof url !== 'string') {
+        return url
+    }
+    // If url is already wrapped in quotes, remove them
+    if (/^['"].*['"]$/.test(url)) {
+        url = url.slice(1, -1);
+    }
+    // Should url be wrapped?
+    // See https://drafts.csswg.org/css-values-3/#urls
+    if (/["'() \t\n]/.test(url)) {
+        return '"' + url.replace(/"/g, '\\"').replace(/\n/g, '\\n') + '"'
+    }
+
+    return url
+}
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = "dist/assets/3f0f071bec392bff23c5bd3797688e23.svg";
+
+/***/ }),
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = AppModel;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_filters__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_tools__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_filters__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_tools__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_mdl_dialog__ = __webpack_require__(0);
 
 
@@ -936,7 +981,7 @@ function AppModel() {
 }
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -955,7 +1000,7 @@ function filterPlaceBySearchString(place, searchString) {
 }
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -966,7 +1011,7 @@ function PlacesLoadingException(message) {
 }
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -974,7 +1019,7 @@ function PlacesLoadingException(message) {
 /* unused harmony export loadAdditionalInfoWindowData */
 /* harmony export (immutable) */ __webpack_exports__["b"] = showInfoWindow;
 /* harmony export (immutable) */ __webpack_exports__["a"] = closeInfoWindow;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foursquare_api__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foursquare_api__ = __webpack_require__(16);
 
 
 function createInfoWindow(place) {
@@ -1028,12 +1073,12 @@ function closeInfoWindow(place) {
 }
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getFoursquareData;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__exceptions_foursquare_loading_exception__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__exceptions_foursquare_loading_exception__ = __webpack_require__(17);
 
 
 const FOURSQUARE_CLIENT_ID = '1TJBD0BFMGT5FJFTNVLRZSP2PLEMDOC0GOFQAJ3NGDY0TTB5';
@@ -1066,7 +1111,7 @@ async function getFoursquareData(place) {
 }
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1077,7 +1122,25 @@ function FoursquareLoadingException(message) {
 }
 
 /***/ }),
-/* 16 */
+/* 18 */
+/***/ (function(module, exports) {
+
+module.exports = "dist/assets/752ac46c2c6027c8b212e73f90f0e1c7.svg";
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+module.exports = "dist/assets/6480611417eff01fc79de9a6b03d85b6.svg";
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+module.exports = "dist/assets/52f5fc0b6ba1f3bcf66a7a8f96c7d835.svg";
+
+/***/ }),
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;(function() {
@@ -1806,7 +1869,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;(function() {
   dialogPolyfill['forceRegisterDialog'] = dialogPolyfill.forceRegisterDialog;
   dialogPolyfill['registerDialog'] = dialogPolyfill.registerDialog;
 
-  if ("function" === 'function' && 'amd' in __webpack_require__(17)) {
+  if ("function" === 'function' && 'amd' in __webpack_require__(22)) {
     // AMD support
     !(__WEBPACK_AMD_DEFINE_RESULT__ = (function() { return dialogPolyfill; }).call(exports, __webpack_require__, exports, module),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -1821,7 +1884,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;(function() {
 
 
 /***/ }),
-/* 17 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = function() {
@@ -1830,7 +1893,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 18 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1855,12 +1918,12 @@ function mapSettings() {
 };
 
 /***/ }),
-/* 19 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = mapMarkers;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_tools__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_tools__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_mdl_dialog__ = __webpack_require__(0);
 
 
@@ -1897,69 +1960,6 @@ function mapMarkers() {
     }
   };
 }
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(21);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
-var transform;
-
-var options = {"hmr":true}
-options.transform = transform
-// add the styles to the DOM
-var update = __webpack_require__(8)(content, options);
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../css-loader/index.js!./dialog-polyfill.css", function() {
-			var newContent = require("!!../css-loader/index.js!./dialog-polyfill.css");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(6)(false);
-// imports
-
-
-// module
-exports.push([module.i, "dialog {\n  position: absolute;\n  left: 0; right: 0;\n  width: -moz-fit-content;\n  width: -webkit-fit-content;\n  width: fit-content;\n  height: -moz-fit-content;\n  height: -webkit-fit-content;\n  height: fit-content;\n  margin: auto;\n  border: solid;\n  padding: 1em;\n  background: white;\n  color: black;\n  display: block;\n}\n\ndialog:not([open]) {\n  display: none;\n}\n\ndialog + .backdrop {\n  position: fixed;\n  top: 0; right: 0; bottom: 0; left: 0;\n  background: rgba(0,0,0,0.1);\n}\n\n._dialog_overlay {\n  position: fixed;\n  top: 0; right: 0; bottom: 0; left: 0;\n}\n\ndialog.fixed {\n  position: fixed;\n  top: 50%;\n  transform: translate(0, -50%);\n}", ""]);
-
-// exports
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-module.exports = "dist/assets/752ac46c2c6027c8b212e73f90f0e1c7.svg";
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports) {
-
-module.exports = "dist/assets/6480611417eff01fc79de9a6b03d85b6.svg";
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-module.exports = "dist/assets/52f5fc0b6ba1f3bcf66a7a8f96c7d835.svg";
 
 /***/ })
 /******/ ]);
