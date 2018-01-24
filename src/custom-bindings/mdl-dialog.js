@@ -16,6 +16,7 @@ function create() {
 
 function show(message) {
   if(_dialog == null) create();
+  // TODO: better to create message que here
   if(_dialog.open) return;
 
   _dialog.querySelector('.mdl-dialog__message').textContent = message;

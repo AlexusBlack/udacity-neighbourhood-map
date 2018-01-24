@@ -63,26 +63,35 @@ function createMarker(place) {
 
 function createInfoWindow(place) {
   const infoWindow = new google.maps.InfoWindow({
-    content: `<b>${place.name}</b><br><br>Loading...`
+    content: `<b>${place.name}</b>`
   });
+
+  loadAdditionalInfoWindowData(place, infoWindow);
+
+  return infoWindow;
+}
+
+function loadAdditionalInfoWindowData(place, infoWindow) {
+  infoWindow.setContent(`<b>${place.name}</b><br><br>Loading...`);
 
   getFoursquareData(place).then(
     (info) => {
       let content = `<b>${place.name}</b><br><br>`;
-
-      if(info == null) {
-        content += `<i>Load error</i>`;
-      } else {
-        if(!(info.address == null)) content += `${info.address}<br>`;
-        if(!(info.city == null)) content += `${info.city}<br>`;
-        if(!(info.phone == null)) content += `<a href='tel:${info.phone}'>${info.formattedPhone}</a>`;
-      }
+      if(!(info.address == null)) content += `${info.address}<br>`;
+      if(!(info.city == null)) content += `${info.city}<br>`;
+      if(!(info.phone == null)) content += `<a href='tel:${info.phone}'>${info.formattedPhone}</a>`;
       
       infoWindow.setContent(content);
+    },
+    (error) => {
+      const div = document.createElement('div');
+      let content = `<b>${place.name}</b><br><br>`;
+      content += `<i>Load error. (<a href="#">Reload</a>)</i>`;
+      div.innerHTML = content;
+      div.querySelector('a').addEventListener('click', () => loadAdditionalInfoWindowData(place, infoWindow));
+      infoWindow.setContent(div);
     }
   );
-
-  return infoWindow;
 }
 
 function showInfoWindow(place) {
