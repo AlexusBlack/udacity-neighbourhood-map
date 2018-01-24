@@ -83,28 +83,9 @@ ko.bindingHandlers.mapSettings = Object(__WEBPACK_IMPORTED_MODULE_1__custom_bind
 ko.bindingHandlers.mapMarkers = Object(__WEBPACK_IMPORTED_MODULE_2__custom_bindings_map_markers__["a" /* default */])();
 ko.applyBindings(model);
 
-const loadPlaces = async () => {
-  model.errorLoadingPlaces(false);
-  let response;
-  try {
-    response = await fetch('./places.json');
-  } catch(e) {
-    console.error('Looks like there was a problem with loading places list.' + e.message);
-    alert('We were unable to load places list, please try to reload it with button in sidebar');
-    model.errorLoadingPlaces(true);
-    return;
-  }
+model.loadPlaces();
 
-  if (response.status !== 200) {
-    Object(__WEBPACK_IMPORTED_MODULE_3__utils_tools__["c" /* showSnackbar */])('Looks like there was a problem with loading places list. Status Code: ' + response.status);
-    return;
-  }
 
-  const placesList = await response.json();
-  model.addPlace(...placesList);
-}
-
-loadPlaces();
 
 /***/ }),
 /* 1 */
@@ -113,6 +94,8 @@ loadPlaces();
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = AppModel;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_filters__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_tools__ = __webpack_require__(4);
+
 
 
 function AppModel() {
@@ -142,6 +125,16 @@ function AppModel() {
       (place) => Object(__WEBPACK_IMPORTED_MODULE_0__utils_filters__["a" /* default */])(place, self.filter())
     );
   });
+
+  this.loadPlaces = async () => {
+    this.errorLoadingPlaces(false);
+    const places = await Object(__WEBPACK_IMPORTED_MODULE_1__utils_tools__["c" /* loadPlaces */])();
+    if(places != null) {
+      this.addPlace(...places);
+    } else {
+      this.errorLoadingPlaces(true);
+    }
+  }
 
   this.addPlace = function(...placesInfo) {
     for(let placeInfo of placesInfo) {
@@ -218,8 +211,9 @@ function mapSettings() {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return clearMap; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return showSnackbar; });
+/* unused harmony export showSnackbar */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createMarker; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return loadPlaces; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__foursquare_api__ = __webpack_require__(6);
 
 
@@ -320,6 +314,26 @@ function showInfoWindow(place) {
 
 function closeInfoWindow(place) {
   place.marker.infoWindow.close();
+}
+
+async function loadPlaces() {
+  let response;
+  try {
+    response = await fetch('./places.json');
+  } catch(e) {
+    console.error('Looks like there was a problem with loading places list.' + e.message);
+    alert('We were unable to load places list, please try to reload it with button in sidebar');
+    return;
+  }
+
+  if (response.status !== 200) {
+    showSnackbar('Looks like there was a problem with loading places list. Status Code: ' + response.status);
+    return;
+  }
+
+  const placesList = await response.json();
+
+  return placesList;
 }
 
 /***/ }),

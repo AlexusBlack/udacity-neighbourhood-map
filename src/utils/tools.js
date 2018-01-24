@@ -1,7 +1,7 @@
 import getFoursquareData from './foursquare-api';
 
 export {
-  clearMap, showSnackbar, createMarker
+  clearMap, showSnackbar, createMarker, loadPlaces
 }
 
 function clearMap(map) {
@@ -99,4 +99,24 @@ function showInfoWindow(place) {
 
 function closeInfoWindow(place) {
   place.marker.infoWindow.close();
+}
+
+async function loadPlaces() {
+  let response;
+  try {
+    response = await fetch('./places.json');
+  } catch(e) {
+    console.error('Looks like there was a problem with loading places list.' + e.message);
+    alert('We were unable to load places list, please try to reload it with button in sidebar');
+    return;
+  }
+
+  if (response.status !== 200) {
+    showSnackbar('Looks like there was a problem with loading places list. Status Code: ' + response.status);
+    return;
+  }
+
+  const placesList = await response.json();
+
+  return placesList;
 }

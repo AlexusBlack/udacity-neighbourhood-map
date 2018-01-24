@@ -1,4 +1,5 @@
 import filterPlaceBySearchString from './utils/filters';
+import { loadPlaces } from './utils/tools';
 
 export default function AppModel() {
   let self = this;
@@ -27,6 +28,16 @@ export default function AppModel() {
       (place) => filterPlaceBySearchString(place, self.filter())
     );
   });
+
+  this.loadPlaces = async () => {
+    this.errorLoadingPlaces(false);
+    const places = await loadPlaces();
+    if(places != null) {
+      this.addPlace(...places);
+    } else {
+      this.errorLoadingPlaces(true);
+    }
+  }
 
   this.addPlace = function(...placesInfo) {
     for(let placeInfo of placesInfo) {
