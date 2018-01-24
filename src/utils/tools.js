@@ -1,6 +1,10 @@
 import PlacesLoadingException from '../exceptions/places-loading-exception';
 import { showInfoWindow, closeInfoWindow } from './map-info-window';
 
+import shopIcon from '../../img/shop-icon.svg';
+import geekIcon from '../../img/geek-icon.svg';
+import restaurantIcon from '../../img/restaurant-icon.svg';
+
 export {
   clearMap, createMarker, loadPlaces
 }
@@ -22,11 +26,11 @@ function clearMap(map) {
 
 function getPlaceIcon(place) {
   if(place.category == 'groceries') {
-    return './img/shop-icon.svg';
+    return shopIcon;
   } else if(place.category == 'geeks') {
-    return './img/geek-icon.svg';
+    return geekIcon;
   } else if(place.category == 'restorant') {
-    return './img/restaurant-icon.svg';
+    return restaurantIcon;
   }
 }
 

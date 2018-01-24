@@ -1,3 +1,6 @@
+import 'dialog-polyfill/dialog-polyfill.css';
+import '../css/styles.css';
+
 import AppModel from './app-model';
 import mapSettingsBinding from './custom-bindings/map-settings';
 import mapMarkersBinding from './custom-bindings/map-markers';

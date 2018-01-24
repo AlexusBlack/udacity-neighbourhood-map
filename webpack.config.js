@@ -7,5 +7,24 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
   watch: true,
-  devtool: 'source-map'
+  devtool: 'source-map',
+  module: {
+    rules: [
+      { 
+        test: /\.css$/, 
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" }
+        ]
+      },
+      { 
+        test: /\.svg$/, 
+        loader: 'file-loader',
+        options: {
+          outputPath: 'assets/',
+          publicPath: 'dist/'
+        }
+      }
+    ]
+  }
 };
