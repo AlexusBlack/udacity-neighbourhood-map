@@ -1,6 +1,12 @@
 import { clearMap, createMarker } from '../utils/tools';
 import mdlDialog from '../utils/mdl-dialog';
 
+/**
+ * Knockout.js for data binding of places to google maps markers
+ * 
+ * @export
+ * @returns 
+ */
 export default function mapMarkers() {
   return {
     update: function (element, valueAccessor, allBindingsAccessor, viewModel) {

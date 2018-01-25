@@ -9,6 +9,11 @@ export {
   clearMap, createMarker, loadPlaces
 }
 
+/**
+ * Clear google maps from markers and infoWindows
+ * 
+ * @param {googleMapObj} map 
+ */
 function clearMap(map) {
   if(!(map.markers == null)) {
     for(let marker of map.markers) {
@@ -24,6 +29,13 @@ function clearMap(map) {
   map.markers = [];
 }
 
+/**
+ * Returns icon for provided place,
+ * which is determined by place category
+ * 
+ * @param {place} place 
+ * @returns 
+ */
 function getPlaceIcon(place) {
   if(place.category == 'groceries') {
     return shopIcon;
@@ -34,6 +46,12 @@ function getPlaceIcon(place) {
   }
 }
 
+/**
+ * Returns marker for the provided place
+ * 
+ * @param {place} place 
+ * @returns Marker
+ */
 function createMarker(place) {
   let marker = new google.maps.Marker({
     position: place.location,
@@ -55,6 +73,11 @@ function createMarker(place) {
   return marker;
 }
 
+/**
+ * Loads places from JSON file asyncronously
+ * 
+ * @returns Promise(Array(Places))
+ */
 async function loadPlaces() {
   let response;
   try {

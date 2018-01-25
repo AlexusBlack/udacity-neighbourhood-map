@@ -1,5 +1,11 @@
 import mdlDialog from '../utils/mdl-dialog';
 
+/**
+ * Knockout.js binding for Google Map settings
+ * 
+ * @export
+ * @returns 
+ */
 export default function mapSettings() {
   return {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel) {

@@ -6,10 +6,14 @@ import AppModel from './app-model';
 import mapSettingsBinding from './custom-bindings/map-settings';
 import mapMarkersBinding from './custom-bindings/map-markers';
 
-const model = new AppModel();
+// Loading custom bindings for Google Maps
 ko.bindingHandlers.mapSettings = mapSettingsBinding();
 ko.bindingHandlers.mapMarkers = mapMarkersBinding();
+
+// Initializing model and applying it
+const model = new AppModel();
 ko.applyBindings(model);
 
+// Loading places from JSON
 model.loadPlaces();
 

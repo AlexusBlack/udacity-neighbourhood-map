@@ -3,6 +3,13 @@ import FoursquareLoadingException from '../exceptions/foursquare-loading-excepti
 const FOURSQUARE_CLIENT_ID = '1TJBD0BFMGT5FJFTNVLRZSP2PLEMDOC0GOFQAJ3NGDY0TTB5';
 const FOURSQUARE_CLIENT_SECRET = '3NAQ2TJEZ2ZAWHMZ1BKSVQ00WKA325VCADGWQZ2N1WC1BETZ';
 
+/**
+ * Gets info about place from Foursquare API
+ * 
+ * @export
+ * @param {place} place 
+ * @returns Object with info including address, city, phone and formatted phone
+ */
 export default async function getFoursquareData(place) {
   let response
   try {
