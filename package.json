@@ -18,12 +18,17 @@
   },
   "homepage": "https://github.com/AlexusBlack/udacity-neighbourhood-map#readme",
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.38",
+    "@babel/preset-env": "^7.0.0-beta.38",
+    "babel-loader": "^8.0.0-beta.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "css-loader": "^0.28.9",
     "file-loader": "^1.1.6",
     "style-loader": "^0.19.1",
     "webpack": "^3.10.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "dialog-polyfill": "^0.4.9"
   }
 }

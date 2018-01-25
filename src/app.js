@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import 'dialog-polyfill/dialog-polyfill.css';
 import '../css/styles.css';
 
