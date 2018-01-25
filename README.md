@@ -18,11 +18,13 @@ npm run build:prod
 ```
 
 ## Additional information
-Project use this libraries and frameworks:
+Project use this libraries, frameworks and apis:
 - Knockout.js
 - Material Design Light
 - Material Icons
 - Webpack as build system
+- Google Maps API
+- Foursquare API
 
 Most of the vendor code shipped from CDN. Project JS and CSS bundled, compiled to ES2015 and minimized.
 
