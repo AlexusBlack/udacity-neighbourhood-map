@@ -6,7 +6,6 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Neighbourhood map</title>
 
-  
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
 </head>
@@ -33,7 +32,6 @@
           </nav>
       </div>
       <nav class="mdl-navigation" data-bind="foreach: filteredPlaces">
-        <!-- <a class="mdl-navigation__link" href="#" data-bind="click: itemClickHandler, css: { 'mdl-navigation__link--current': active }"> -->
         <a class="mdl-navigation__link" href="#" data-bind="click: $parent.selectPlace, css: { 'mdl-navigation__link--current': active }">
           <span data-bind="if: category == 'geeks'"><i class="material-icons">stars</i></span>
           <span data-bind="if: category == 'groceries'"><i class="material-icons">shopping_cart</i></span>
@@ -59,13 +57,5 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
 
   <script src="dist/bundle.js"></script>
-  <!-- <script src="src/custom-bindings/map-settings.js"></script>
-  <script src="src/custom-bindings/map-markers.js"></script>
-  <script src="src/utils/tools.js"></script>
-  <script src="src/utils/filters.js"></script>
-  <script src="src/utils/marker-click-handler.js"></script>
-  <script src="src/utils/item-click-handler.js"></script>
-  <script src="src/model.js"></script>
-  <script src="src/app.js"></script> -->
 </body>
 </html>
