@@ -27,15 +27,10 @@ export default function mapMarkers() {
         }
       };
       
-      if (document.readyState === 'complete') {
-        createMarkers();
-      } else {
-        if(typeof(google) == 'undefined') {
-          mdlDialog.show('Google Map api is unavailable, please check your internet connection.');
-          return;
-        }
-        google.maps.event.addDomListener(window, 'load', createMarkers);
+      if(typeof(google) != 'undefined') {
+        google.maps.event.addDomListener(window, 'load', () => createMarkers());
       }
+      document.addEventListener('MapsReadyEvent', createMarkers);
     }
   };
 }

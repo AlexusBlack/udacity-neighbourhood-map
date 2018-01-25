@@ -10,14 +10,20 @@ export default function mapSettings() {
   return {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
       // Unwrapping map data
-      let settings = ko.utils.unwrapObservable(valueAccessor());
+      const settings = ko.utils.unwrapObservable(valueAccessor());
   
-      let initialize = () => element.googleMap = new google.maps.Map(element, settings);
-      if(typeof(google) == 'undefined') {
+      const initialize = () => element.googleMap = new google.maps.Map(element, settings);
+      const error = () => {
         mdlDialog.show('Google Map api is unavailable, please check your internet connection.');
-        return;
+      };
+
+      if(typeof(google) != 'undefined') {
+        google.maps.event.addDomListener(window, 'load', () => initialize());
       }
-      google.maps.event.addDomListener(window, 'load',  initialize);
+      if(document.mapsLoadError) error();
+
+      document.addEventListener('MapsReadyEvent', initialize);
+      document.addEventListener('MapsLoadErrorEvent', error);
     }
   };
 };
