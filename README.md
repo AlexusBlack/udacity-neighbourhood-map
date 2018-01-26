@@ -21,6 +21,8 @@ Your can run developer's server using following command:
 ```
 npm run serve
 ```
+As an alternative local server like MAMP, LAMP, WAMP or 'npm serve -g' will work as well.
+Please serve content from root folder of project where index file located.
 
 For production any static web server should work, use nginx, apache2 or other.
 
