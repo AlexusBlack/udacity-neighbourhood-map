@@ -1,7 +1,7 @@
 # Udacity Neighbourhood Map
 Neighbourhood map project for Udacity
 
-## Dependencies and build process 
+## Dependencies, build and run process 
 This project requers several packages that can be installed using npm (or yarn).
 ```
 npm install
@@ -16,6 +16,13 @@ Or in 'production' mode, which is better for consumer facing server:
 ```
 npm run build:prod
 ```
+
+Your can run developer's server using following command:
+```
+npm run serve
+```
+
+For production any static web server should work, use nginx, apache2 or other.
 
 ## Additional information
 Project use this libraries, frameworks and apis:
